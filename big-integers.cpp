@@ -6,74 +6,26 @@
 class BigInteger
 {
 public:
-    BigInteger(const std::string& x) : _number(x.rbegin(), x.rend())
+    BigInteger(const std::string& x)
     {
-        std::transform(_number.begin(), _number.end(), _number.begin(),
-                       [](char i) { return i - '0'; });
     }
 
     std::string toString() const
     {
-        std::string x(_number.size(), 0);
-        std::transform(_number.rbegin(), _number.rend(), x.begin(),
-                       [](int i) { return i + '0';});
-        return x;
+        return "";
     }
 
     BigInteger operator+(const BigInteger& that) const
     {
-        const auto& shorter_number = (_number.size() < that._number.size()) ? _number : that._number;
-        const auto& longer_number = (_number.size() >= that._number.size()) ? _number : that._number;
-
-        std::string result;
-        int carry = 0;
-        for (auto i = 0u; i < longer_number.size(); i++) {
-            const auto sum = ((i < shorter_number.size()) ? 
-                                 _number[i] + that._number[i] : longer_number[i]) + carry;
-
-            const auto real_sum = sum % 10;
-            carry = sum / 10;
-            result = std::to_string(real_sum) + result;
-        }
-
-        if (carry) {
-            result = std::to_string(carry) + result;
-        }
-
-        return BigInteger(result);
+        return BigInteger("");
     }
 
     BigInteger operator*(const BigInteger& that) const
     {
-        BigInteger final_result{"0"};
-
-        for (auto j = 0u; j < that._number.size(); j++) {
-            std::string result = "";
-            auto product =0;
-            auto carry = 0;
-
-            for (auto i = 0u; i < _number.size(); i++) {
-                    product = _number[i] * that._number[j] + carry;
-                    carry = product / 10;
-                    product %= 10;
-                    result = std::to_string(product) + result;
-            }
-
-            if (carry) {
-                result = std::to_string(carry) + result;
-            }
-
-            const auto partial_product = BigInteger(result + std::string(j, '0'));
-            final_result = final_result + partial_product;
-        }
-        
-
-        return final_result;
+        return BigInteger("");
     }
-
 private:
-    //std::string _number;
-    std::vector<int> _number;
+
 };
 
 namespace helpers
