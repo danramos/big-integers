@@ -13,26 +13,34 @@
 #define BOLD(x) "\x1B[1m" x RST
 
 #define ASSERT_EQUAL(a, b) test::assert_equal_impl(a, b, #a, #b,  __LINE__, __FILE__);
+
+#define IGNORE_TEST_CASE(TC) void ignore_tc_##TC()
+
+
+
+
+
+
 #define TEST_CASE(TC) namespace test { struct Test_##TC               \
-    {                                                   \
-        void execute();                                 \
-                                                        \
-        void registerMe()                               \
-        {                                               \
-            TestRunner::instance().registerTest(        \
-                         #TC,                           \
-                         std::bind(&Test_##TC::execute, this)   \
-                    );                                  \
-        }                                               \
-                                                        \
-        Test_##TC()                                          \
-        {                                               \
-            registerMe();                               \
-        }                                               \
-    };                                                  \
-    } \
-    static test::Test_##TC tc_##TC;                                     \
-    void test::Test_##TC::execute()                                 \
+{                                                   \
+    void execute();                                 \
+                                                    \
+    void registerMe()                               \
+    {                                               \
+        TestRunner::instance().registerTest(        \
+                     #TC,                           \
+                     std::bind(&Test_##TC::execute, this)   \
+                );                                  \
+    }                                               \
+                                                    \
+    Test_##TC()                                          \
+    {                                               \
+        registerMe();                               \
+    }                                               \
+};                                                  \
+} \
+static test::Test_##TC tc_##TC;                                     \
+void test::Test_##TC::execute()                                 \
 
 namespace test
 {
@@ -45,8 +53,8 @@ namespace test
     {
         if (!(a == b)){
             std::cout << "\x1B[1m\x1B[31m[ERROR] Assertion failed at line " <<filename << ":" << line_number
-                      << ": \x1B[0mexpr: [ " << a_label << " != " << b_label
-                      << " ],  values: [ " << a << " != " << b  << " ] " << std::endl;
+                      << ": \x1B[0m\n    expression: [ " << a_label << " != " << b_label
+                      << " ]\n    values: [ " << a << " != " << b  << " ] " << std::endl;
             throw new std::runtime_error("fail");
         }
     }
@@ -67,7 +75,7 @@ namespace test
         void runTests()
         {
             for (const auto& tc: _tests) {
-                std::cout << CGREEN << BOLD("[START] ") << tc.first << "" << CWHITE << std::endl;
+                std::cout << CGREEN << BOLD("[START ] ") << tc.first << "" << CWHITE << std::endl;
                 try {
                     tc.second();
 
@@ -75,6 +83,7 @@ namespace test
                     std::cout << std::endl;
                 } catch(...) {
                     std::cout << CRED << BOLD("[FAILED] ") << tc.first << "" << CWHITE << std::endl;
+                    std::cout << std::endl;
                 }
             }
         }
